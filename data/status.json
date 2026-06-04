@@ -1,12 +1,12 @@
 {
-  "status": "unknown",
-  "message": "En attente de première collecte.",
-  "train_number": null,
-  "line": "Bordeaux → Toulouse → Sète",
+  "status": "ok",
+  "message": "Test GitHub OK",
+  "train_number": "000000",
+  "line": "Bordeaux -> Toulouse -> Sete",
   "station": "Toulouse Matabiau",
-  "scheduled_time": null,
-  "estimated_time": null,
-  "track": null,
-  "source": "github-bootstrap",
-  "updated_at": "2026-06-05T00:07:00+02:00"
+  "scheduled_time": "23:20",
+  "estimated_time": "23:20",
+  "track": "Voie 1",
+  "source": "github-test",
+  "updated_at": "2026-06-04T22:25:31.672Z"
 }
