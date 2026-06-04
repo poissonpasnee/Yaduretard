@@ -6,9 +6,9 @@ const now = new Date().toISOString();
 const samples = [
   {
     status: 'ok',
-    message: 'Début de service maintenu, aucun retard impactant détecté.',
+    message: 'Debut de service maintenu, aucun retard impactant detecte.',
     train_number: '876201',
-    line: 'Bordeaux → Toulouse → Sète',
+    line: 'Bordeaux -> Toulouse -> Sete',
     station: 'Toulouse Matabiau',
     scheduled_time: '23:20',
     estimated_time: '23:20',
@@ -18,9 +18,9 @@ const samples = [
   },
   {
     status: 'delay',
-    message: 'Retard estimé de 12 min sur le train utile pour Toulouse Matabiau.',
+    message: 'Retard estime de 12 min sur le train utile pour Toulouse Matabiau.',
     train_number: '876251',
-    line: 'Bordeaux → Toulouse → Sète',
+    line: 'Bordeaux -> Toulouse -> Sete',
     station: 'Toulouse Matabiau',
     scheduled_time: '23:20',
     estimated_time: '23:32',
@@ -30,9 +30,9 @@ const samples = [
   },
   {
     status: 'unknown',
-    message: 'Trafic perturbé, estimation à confirmer.',
+    message: 'Trafic perturbe, estimation a confirmer.',
     train_number: '876299',
-    line: 'Bordeaux → Toulouse → Sète',
+    line: 'Bordeaux -> Toulouse -> Sete',
     station: 'Toulouse Matabiau',
     scheduled_time: '23:20',
     estimated_time: null,
