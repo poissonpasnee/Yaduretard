@@ -1,1 +1,120 @@
-a
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SNCF Retard Mobile</title>
+  <style>
+    :root {
+      --bg: #f7f6f2;
+      --card: #ffffff;
+      --text: #222;
+      --muted: #666;
+      --ok: #2e7d32;
+      --warn: #d97a00;
+      --err: #b3261e;
+      --border: #ddd8cf;
+      --accent: #01696f;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .wrap {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-size: 1.3rem;
+      margin: 0 0 12px;
+    }
+    .status {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .ok { color: var(--ok); }
+    .warn { color: var(--warn); }
+    .err { color: var(--err); }
+    .muted {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    .row {
+      margin: 8px 0;
+    }
+    button {
+      width: 100%;
+      min-height: 44px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--accent);
+      color: white;
+      font-size: 1rem;
+      padding: 12px;
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <h1>Toulouse Matabiau</h1>
+      <div id="status" class="status">Chargement…</div>
+      <div id="message" class="row"></div>
+      <div id="details" class="muted"></div>
+    </section>
+
+    <section class="card">
+      <button id="refreshBtn">Rafraîchir l’affichage</button>
+    </section>
+  </main>
+
+  <script>
+    async function loadStatus() {
+      try {
+        const res = await fetch('./data/status.json?v=' + Date.now());
+        const data = await res.json();
+
+        const statusEl = document.getElementById('status');
+        const messageEl = document.getElementById('message');
+        const detailsEl = document.getElementById('details');
+
+        statusEl.className = 'status';
+
+        if (data.status === 'ok') {
+          statusEl.textContent = 'Service maintenu';
+          statusEl.classList.add('ok');
+        } else if (data.status === 'delay') {
+          statusEl.textContent = 'Retard détecté';
+          statusEl.classList.add('warn');
+        } else {
+          statusEl.textContent = 'Statut incertain';
+          statusEl.classList.add('err');
+        }
+
+        messageEl.textContent = data.message || 'Aucun message';
+        detailsEl.textContent =
+          `Train: ${data.train_number || '-'} · Ligne: ${data.line || '-'} · Prévu: ${data.scheduled_time || '-'} · Estimé: ${data.estimated_time || '-'} · Voie: ${data.track || '-'} · Mise à jour: ${data.updated_at || '-'}`;
+      } catch (e) {
+        document.getElementById('status').textContent = 'Erreur de lecture';
+        document.getElementById('status').className = 'status err';
+        document.getElementById('message').textContent = 'Impossible de charger le statut.';
+        document.getElementById('details').textContent = '';
+      }
+    }
+
+    document.getElementById('refreshBtn').addEventListener('click', loadStatus);
+    loadStatus();
+  </script>
+</body>
+</html>
