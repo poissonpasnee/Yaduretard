@@ -17,7 +17,9 @@
       --accent: #01696f;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -57,17 +59,13 @@
 
     .row {
       margin: 8px 0;
-      line-height: 1.5;
+      line-height: 1.45;
     }
 
     .muted {
       color: var(--muted);
       font-size: 0.95rem;
-      line-height: 1.5;
-    }
-
-    .label {
-      font-weight: 600;
+      line-height: 1.45;
     }
 
     button {
@@ -79,10 +77,6 @@
       color: white;
       font-size: 1rem;
       padding: 12px;
-    }
-
-    button:active {
-      opacity: 0.92;
     }
   </style>
 </head>
@@ -101,62 +95,62 @@
   </main>
 
   <script>
-    function formatDetails(data) {
+    function buildDetails(data) {
       const train = data.train || {};
       const service = data.service || {};
 
       return [
-        `Train: ${train.numero || "-"}`,
-        `Origine: ${train.origine || "-"}`,
-        `Destination: ${train.destination || "-"}`,
-        `Prévu: ${train.heurePrevue || "-"}`,
-        `Estimé: ${train.heureEstimee || "-"}`,
-        `Voie: ${train.voie || "-"}`,
-        `Prise de service: ${service.heureCorrigee || service.heureTheorique || "-"}`,
-        `Mise à jour: ${data.updatedAt || "-"}`
-      ].join(" · ");
+        `Train: ${train.numero || '-'}`,
+        `Origine: ${train.origine || '-'}`,
+        `Destination: ${train.destination || '-'}`,
+        `Prévu: ${train.heurePrevue || '-'}`,
+        `Estimé: ${train.heureEstimee || '-'}`,
+        `Voie: ${train.voie || '-'}`,
+        `Prise de service: ${service.heureCorrigee || service.heureTheorique || '-'}`,
+        `Mise à jour: ${data.updatedAt || '-'}`
+      ].join(' · ');
     }
 
     async function loadStatus() {
-      const statusEl = document.getElementById("status");
-      const messageEl = document.getElementById("message");
-      const detailsEl = document.getElementById("details");
-      const gareEl = document.getElementById("gare");
+      const gareEl = document.getElementById('gare');
+      const statusEl = document.getElementById('status');
+      const messageEl = document.getElementById('message');
+      const detailsEl = document.getElementById('details');
 
       try {
-        const res = await fetch("./data/status.json?v=" + Date.now());
+        const res = await fetch('./data/status.json?v=' + Date.now());
 
         if (!res.ok) {
-          throw new Error("HTTP " + res.status);
+          throw new Error('HTTP ' + res.status);
         }
 
         const data = await res.json();
 
-        gareEl.textContent = data.gare || "Gare non définie";
-        statusEl.className = "status";
+        gareEl.textContent = data.gare || 'Gare non définie';
+        statusEl.className = 'status';
 
-        if (data.statutCode === "ok") {
-          statusEl.textContent = data.statut || "Service maintenu";
-          statusEl.classList.add("ok");
-        } else if (data.statutCode === "delay") {
-          statusEl.textContent = data.statut || "Retard détecté";
-          statusEl.classList.add("warn");
+        if (data.statutCode === 'ok') {
+          statusEl.textContent = data.statut || 'Service maintenu';
+          statusEl.classList.add('ok');
+        } else if (data.statutCode === 'delay') {
+          statusEl.textContent = data.statut || 'Retard détecté';
+          statusEl.classList.add('warn');
         } else {
-          statusEl.textContent = data.statut || "Statut incertain";
-          statusEl.classList.add("err");
+          statusEl.textContent = data.statut || 'Statut incertain';
+          statusEl.classList.add('err');
         }
 
-        messageEl.textContent = data.message || "Aucun message";
-        detailsEl.textContent = formatDetails(data);
-      } catch (error) {
-        statusEl.textContent = "Erreur de lecture";
-        statusEl.className = "status err";
-        messageEl.textContent = "Impossible de charger le statut.";
-        detailsEl.textContent = "Vérifie la présence et le format de data/status.json.";
+        messageEl.textContent = data.message || 'Aucun message';
+        detailsEl.textContent = buildDetails(data);
+      } catch (e) {
+        statusEl.textContent = 'Erreur de lecture';
+        statusEl.className = 'status err';
+        messageEl.textContent = 'Impossible de charger le statut.';
+        detailsEl.textContent = 'Vérifie le format de data/status.json.';
       }
     }
 
-    document.getElementById("refreshBtn").addEventListener("click", loadStatus);
+    document.getElementById('refreshBtn').addEventListener('click', loadStatus);
     loadStatus();
   </script>
 </body>
