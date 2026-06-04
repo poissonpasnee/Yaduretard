@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yaduretard</title>
+  <style>
+    :root{--bg:#f6f3ef;--card:#fff;--text:#1f2937;--muted:#6b7280;--accent:#0f766e;--accent-dark:#115e59;--border:#e5e7eb;--shadow:0 10px 30px rgba(17,24,39,.08);--success-bg:#e6f4ef;--success-text:#0f766e;--danger-bg:#fef2f2;--danger-text:#b91c1c}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:linear-gradient(180deg,var(--bg),#fff 60%);color:var(--text);min-height:100vh}
+    .wrap{width:min(100%,560px);margin:0 auto;padding:18px 14px 28px}
+    .header{margin-bottom:14px}
+    .title{margin:0;font-size:1.5rem;line-height:1.2;font-weight:800;letter-spacing:-.02em}
+    .subtitle{margin:6px 0 0;font-size:.95rem;color:var(--muted)}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);padding:18px;margin-bottom:14px}
+    .station{margin:0 0 8px;font-size:1.2rem;font-weight:800}
+    .status{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;font-weight:700;margin:0 0 14px;background:var(--success-bg);color:var(--success-text)}
+    .status::before{content:"";width:9px;height:9px;border-radius:50%;background:currentColor;box-shadow:0 0 0 4px rgba(15,118,110,.12)}
+    .message{margin:0 0 16px;font-size:1rem;line-height:1.5}
+    .grid{display:grid;gap:10px}
+    .row{display:grid;grid-template-columns:1fr;gap:4px;padding:12px 14px;border:1px solid var(--border);border-radius:14px;background:#fcfcfc}
+    .label{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700}
+    .value{font-size:.98rem;line-height:1.35;word-break:break-word}
+    .actions{display:grid;gap:10px;margin-top:8px}
+    button{border:none;border-radius:14px;padding:14px 16px;font-size:1rem;font-weight:700;cursor:pointer;transition:transform .06s ease,background .2s ease,opacity .2s ease}
+    button:active{transform:scale(.99)}
+    .primary{background:var(--accent);color:#fff;box-shadow:0 8px 18px rgba(15,118,110,.22)}
+    .primary:hover{background:var(--accent-dark)}
+    .secondary{background:#eef2f7;color:var(--text)}
+    .footer{margin-top:12px;text-align:center;font-size:.85rem;color:var(--muted)}
+    .badge{display:inline-block;margin-top:8px;padding:6px 10px;border-radius:999px;background:#eef2ff;color:#4338ca;font-size:.82rem;font-weight:700}
+    .danger{background:var(--danger-bg)!important;color:var(--danger-text)!important}
+    .danger::before{box-shadow:0 0 0 4px rgba(185,28,28,.12)}
+    @media (min-width:520px){
+      .title{font-size:1.75rem}
+      .row{grid-template-columns:140px 1fr;align-items:start}
+      .label{padding-top:2px}
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="header">
+      <h1 class="title">Yaduretard</h1>
+      <p class="subtitle">Affichage temps réel du dernier train surveillé.</p>
+    </header>
+
+    <section class="card" id="resultCard">
+      <h2 class="station" id="stationName">Chargement…</h2>
+      <div class="status" id="serviceStatus">Lecture des données</div>
+      <p class="message" id="messageText">Récupération du flux en cours.</p>
+
+      <div class="grid">
+        <div class="row"><div class="label">Train</div><div class="value" id="trainValue">—</div></div>
+        <div class="row"><div class="label">Origine</div><div class="value" id="originValue">—</div></div>
+        <div class="row"><div class="label">Destination</div><div class="value" id="destinationValue">—</div></div>
+        <div class="row"><div class="label">Prévu</div><div class="value" id="plannedValue">—</div></div>
+        <div class="row"><div class="label">Estimé</div><div class="value" id="estimatedValue">—</div></div>
+        <div class="row"><div class="label">Voie</div><div class="value" id="trackValue">—</div></div>
+        <div class="row"><div class="label">Mise à jour</div><div class="value" id="updateValue">—</div></div>
+      </div>
+
+      <div class="actions">
+        <button class="primary" id="refreshBtn">Rafraîchir l’affichage</button>
+        <button class="secondary" id="copyBtn">Copier les infos</button>
+      </div>
+
+      <div class="badge" id="sourceBadge">Source : flux JSON</div>
+    </section>
+
+    <div class="footer" id="footerText">Version mobile optimisée.</div>
+  </main>
+
+  <script>
+    const DATA_URL = './data.json';
+    const els = Object.fromEntries(['stationName','serviceStatus','messageText','trainValue','originValue','destinationValue','plannedValue','estimatedValue','trackValue','updateValue','footerText'].map(id => [id, document.getElementById(id)]));
+
+    function setStatus(type, text) {
+      els.serviceStatus.classList.remove('danger');
+      if (type === 'danger') els.serviceStatus.classList.add('danger');
+      els.serviceStatus.textContent = text;
+    }
+
+    function normalize(data) {
+      return {
+        stationName: data.stationName ?? data.gare ?? '—',
+        serviceStatus: data.serviceStatus ?? data.statut ?? '—',
+        messageText: data.messageText ?? data.message ?? '—',
+        trainValue: data.trainValue ?? data.train ?? '—',
+        originValue: data.originValue ?? data.origin ?? '—',
+        destinationValue: data.destinationValue ?? data.destination ?? '—',
+        plannedValue: data.plannedValue ?? data.prevu ?? '—',
+        estimatedValue: data.estimatedValue ?? data.estime ?? '—',
+        trackValue: data.trackValue ?? data.voie ?? '—',
+        updateValue: data.updateValue ?? data.miseAJour ?? new Date().toLocaleString('fr-FR')
+      };
+    }
+
+    function render(data) {
+      const d = normalize(data);
+      els.stationName.textContent = d.stationName;
+      setStatus(/retard|incident|supprim/i.test(d.serviceStatus + ' ' + d.messageText) ? 'danger' : 'ok', d.serviceStatus);
+      els.messageText.textContent = d.messageText;
+      els.trainValue.textContent = d.trainValue;
+      els.originValue.textContent = d.originValue;
+      els.destinationValue.textContent = d.destinationValue;
+      els.plannedValue.textContent = d.plannedValue;
+      els.estimatedValue.textContent = d.estimatedValue;
+      els.trackValue.textContent = d.trackValue;
+      els.updateValue.textContent = d.updateValue;
+      els.footerText.textContent = 'Dernière actualisation : ' + new Date().toLocaleTimeString('fr-FR');
+      window.__currentData = d;
+    }
+
+    async function loadData() {
+      els.serviceStatus.textContent = 'Lecture des données';
+      els.messageText.textContent = 'Récupération du flux en cours.';
+      try {
+        const url = `${DATA_URL}?t=${Date.now()}`;
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const json = await res.json();
+        render(json);
+      } catch (e) {
+        els.stationName.textContent = 'Impossibl
