@@ -1,12 +1,22 @@
 {
-  "status": "ok",
-  "message": "Test GitHub OK",
-  "train_number": "000000",
-  "line": "Bordeaux -> Toulouse -> Sete",
-  "station": "Toulouse Matabiau",
-  "scheduled_time": "23:20",
-  "estimated_time": "23:20",
-  "track": "Voie 1",
-  "source": "github-test",
-  "updated_at": "2026-06-04T22:25:31.672Z"
+  "gare": "Toulouse Matabiau",
+  "statut": "Service maintenu",
+  "statutCode": "ok",
+  "message": "Aucun retard bloquant détecté pour le dernier train surveillé.",
+  "train": {
+    "numero": "00000",
+    "origine": "Bordeaux",
+    "destination": "Toulouse",
+    "gareSuivie": "Toulouse Matabiau",
+    "voie": "1",
+    "heurePrevue": "23:20",
+    "heureEstimee": "23:20",
+    "retardMinutes": 0
+  },
+  "service": {
+    "heureTheorique": "23:20",
+    "heureCorrigee": "23:20",
+    "impact": false
+  },
+  "updatedAt": "2026-06-04T22:34:49.575Z"
 }
