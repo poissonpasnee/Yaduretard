@@ -122,4 +122,57 @@
         const json = await res.json();
         render(json);
       } catch (e) {
-        els.stationName.textContent = 'Impossibl
+        els.stationName.textContent = 'Impossible de charger';
+        setStatus('danger', 'Flux indisponible');
+        els.messageText.textContent = 'Vérifie que data.json existe et que son chemin est correct.';
+        els.trainValue.textContent = '—';
+        els.originValue.textContent = '—';
+        els.destinationValue.textContent = '—';
+        els.plannedValue.textContent = '—';
+        els.estimatedValue.textContent = '—';
+        els.trackValue.textContent = '—';
+        els.updateValue.textContent = new Date().toLocaleString('fr-FR');
+      }
+    }
+
+    document.getElementById('refreshBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('refreshBtn');
+      btn.disabled = true;
+      btn.textContent = 'Actualisation...';
+      await loadData();
+      btn.disabled = false;
+      btn.textContent = 'Rafraîchir l’affichage';
+    });
+
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      const d = window.__currentData;
+      if (!d) return;
+      const text = [
+        d.stationName,
+        d.serviceStatus,
+        d.messageText,
+        d.trainValue,
+        d.originValue,
+        d.destinationValue,
+        d.plannedValue,
+        d.estimatedValue,
+        d.trackValue,
+        d.updateValue
+      ].join('
+');
+      try {
+        await navigator.clipboard.writeText(text);
+        const btn = document.getElementById('copyBtn');
+        const old = btn.textContent;
+        btn.textContent = 'Copié !';
+        setTimeout(() => btn.textContent = old, 1000);
+      } catch {
+        alert('Copie impossible sur ce navigateur.');
+      }
+    });
+
+    loadData();
+    setInterval(loadData, 15000);
+  </script>
+</body>
+</html>
