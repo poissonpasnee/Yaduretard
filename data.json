@@ -1,7 +1,7 @@
 {
   "stationName": "Toulouse Matabiau",
   "serviceStatus": "Service maintenu",
-  "messageText": "Aucun retard bloquant détecté pour le dernier train surveillé.",
+  "messageText": "Test JSON chargé correctement.",
   "trainValue": "Train : 00000",
   "originValue": "Bordeaux",
   "destinationValue": "Toulouse",
