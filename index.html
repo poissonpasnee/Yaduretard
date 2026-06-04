@@ -5,12 +5,147 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Yaduretard</title>
   <style>
-    :root{--bg:#f5f1eb;--card:#fff;--text:#1f2937;--muted:#6b7280;--accent:#0f766e;--accent-dark:#115e59;--border:#e5e7eb;--shadow:0 10px 30px rgba(17,24,39,.08);--success-bg:#e6f4ef;--success-text:#0f766e;--danger-bg:#fef2f2;--danger-text:#b91c1c}
-    *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(180deg,var(--bg),#fff 60%);color:var(--text);min-height:100vh}
-    .wrap{width:min(100%,560px);margin:0 auto;padding:18px 14px 28px}.header{margin-bottom:14px}.title{margin:0;font-size:1.6rem;font-weight:900;line-height:1.2}.subtitle{margin:4px 0 0;color:var(--muted)}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);padding:18px}.station{margin:0 0 8px;font-size:1.2rem;font-weight:800}.status{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;font-weight:700;margin:0 0 14px;background:var(--success-bg);color:var(--success-text)}.status::before{content:'';width:9px;height:9px;border-radius:50%;background:currentColor;box-shadow:0 0 0 4px rgba(15,118,110,.12)}.status.err{background:var(--danger-bg);color:var(--danger-text)}.status.err::before{box-shadow:0 0 0 4px rgba(185,28,28,.12)}
-    .message{margin:0 0 16px;line-height:1.5}.grid{display:grid;gap:10px}.row{display:grid;grid-template-columns:1fr;gap:4px;padding:12px 14px;border:1px solid var(--border);border-radius:14px;background:#fcfcfc}.label{font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700}.value{font-size:1rem;word-break:break-word}.actions{display:grid;gap:10px;margin-top:12px}button{border:0;border-radius:14px;padding:14px 16px;font-size:1rem;font-weight:800;cursor:pointer}.primary{background:var(--accent);color:#fff}.primary:hover{background:var(--accent-dark)}.secondary{background:#eef2f7;color:var(--text)}.footer{margin-top:12px;text-align:center;color:var(--muted);font-size:.85rem}
-    @media (min-width:520px){.row{grid-template-columns:150px 1fr;align-items:start}.label{padding-top:2px}}
+    :root{
+      --bg:#f5f1eb;
+      --card:#fff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --accent:#0f766e;
+      --accent-dark:#115e59;
+      --border:#e5e7eb;
+      --shadow:0 10px 30px rgba(17,24,39,.08);
+      --success-bg:#e6f4ef;
+      --success-text:#0f766e;
+      --danger-bg:#fef2f2;
+      --danger-text:#b91c1c
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+      background:linear-gradient(180deg,var(--bg),#fff 60%);
+      color:var(--text);
+      min-height:100vh
+    }
+    .wrap{
+      width:min(100%,560px);
+      margin:0 auto;
+      padding:18px 14px 28px
+    }
+    .header{margin-bottom:14px}
+    .title{
+      margin:0;
+      font-size:1.6rem;
+      font-weight:900;
+      line-height:1.2
+    }
+    .subtitle{
+      margin:4px 0 0;
+      color:var(--muted)
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      padding:18px
+    }
+    .station{
+      margin:0 0 8px;
+      font-size:1.2rem;
+      font-weight:800
+    }
+    .status{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      font-weight:700;
+      margin:0 0 14px;
+      background:var(--success-bg);
+      color:var(--success-text)
+    }
+    .status::before{
+      content:'';
+      width:9px;
+      height:9px;
+      border-radius:50%;
+      background:currentColor;
+      box-shadow:0 0 0 4px rgba(15,118,110,.12)
+    }
+    .status.err{
+      background:var(--danger-bg);
+      color:var(--danger-text)
+    }
+    .status.err::before{
+      box-shadow:0 0 0 4px rgba(185,28,28,.12)
+    }
+    .message{
+      margin:0 0 16px;
+      line-height:1.5
+    }
+    .grid{
+      display:grid;
+      gap:10px
+    }
+    .row{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:4px;
+      padding:12px 14px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:#fcfcfc
+    }
+    .label{
+      font-size:.78rem;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      color:var(--muted);
+      font-weight:700
+    }
+    .value{
+      font-size:1rem;
+      word-break:break-word
+    }
+    .actions{
+      display:grid;
+      gap:10px;
+      margin-top:12px
+    }
+    button{
+      border:0;
+      border-radius:14px;
+      padding:14px 16px;
+      font-size:1rem;
+      font-weight:800;
+      cursor:pointer
+    }
+    .primary{
+      background:var(--accent);
+      color:#fff
+    }
+    .primary:hover{
+      background:var(--accent-dark)
+    }
+    .secondary{
+      background:#eef2f7;
+      color:var(--text)
+    }
+    .footer{
+      margin-top:12px;
+      text-align:center;
+      color:var(--muted);
+      font-size:.85rem
+    }
+    @media (min-width:520px){
+      .row{
+        grid-template-columns:150px 1fr;
+        align-items:start
+      }
+      .label{padding-top:2px}
+    }
   </style>
 </head>
 <body>
@@ -48,6 +183,7 @@
     const DATA_URL = './data.json';
     const el = id => document.getElementById(id);
     let current = null;
+
     const map = {
       stationName: ['stationName','gare','station'],
       serviceStatus: ['serviceStatus','statut','status'],
@@ -60,6 +196,7 @@
       trackValue: ['trackValue','voie','platform'],
       updateValue: ['updateValue','miseAJour','updatedAt','lastUpdate']
     };
+
     function pick(o, keys, fallback='—') {
       for (const k of keys) {
         const v = o && o[k];
@@ -67,14 +204,18 @@
       }
       return fallback;
     }
+
     function setStatus(text, err=false) {
       const s = el('serviceStatus');
       s.className = 'status' + (err ? ' err' : '');
       s.textContent = text;
     }
+
     function render(obj) {
       current = {};
-      for (const [field, keys] of Object.entries(map)) current[field] = pick(obj, keys, field === 'updateValue' ? new Date().toLocaleString('fr-FR') : '—');
+      for (const [field, keys] of Object.entries(map)) {
+        current[field] = pick(obj, keys, field === 'updateValue' ? new Date().toLocaleString('fr-FR') : '—');
+      }
       el('stationName').textContent = current.stationName;
       el('messageText').textContent = current.messageText;
       el('trainValue').textContent = current.trainValue;
@@ -87,6 +228,7 @@
       el('footerText').textContent = 'Dernière actualisation : ' + new Date().toLocaleTimeString('fr-FR');
       setStatus(current.serviceStatus, false);
     }
+
     async function loadData() {
       setStatus('Lecture des données');
       el('messageText').textContent = 'Récupération du flux en cours.';
@@ -104,13 +246,22 @@
         setStatus('Flux indisponible', true);
       }
     }
+
     el('refreshBtn').onclick = loadData;
+
     el('copyBtn').onclick = async () => {
       if (!current) return;
       const text = Object.entries(current).map(([k,v]) => `${k}: ${v}`).join('
 ');
-      try { await navigator.clipboard.writeText(text); const b = el('copyBtn'); const old = b.textContent; b.textContent = 'Copié !'; setTimeout(() => b.textContent = old, 1000); } catch {}
+      try {
+        await navigator.clipboard.writeText(text);
+        const b = el('copyBtn');
+        const old = b.textContent;
+        b.textContent = 'Copié !';
+        setTimeout(() => b.textContent = old, 1000);
+      } catch {}
     };
+
     loadData();
     setInterval(loadData, 15000);
   </script>
