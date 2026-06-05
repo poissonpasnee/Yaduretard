@@ -1,0 +1,12 @@
+{
+  "stationName": "Gare SNCF",
+  "serviceStatus": "Lecture des données",
+  "messageText": "Données prêtes pour affichage.",
+  "trainValue": "TGV 1234",
+  "originValue": "Paris Gare de Lyon",
+  "destinationValue": "Lyon Part-Dieu",
+  "plannedValue": "12:34",
+  "estimatedValue": "12:41",
+  "trackValue": "Voie 7",
+  "updateValue": "2026-06-05 02:22"
+}
