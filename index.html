@@ -11,10 +11,13 @@
     .status { display: inline-block; padding: 8px 12px; border-radius: 999px; background: #e6f4ef; color: #0f766e; font-weight: 700; }
     .row { border: 1px solid #e5e7eb; border-radius: 14px; padding: 12px 14px; margin-top: 10px; background: #fcfcfc; }
     .label { font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; color: #6b7280; font-weight: 700; }
-    .value { font-size: 1rem; }
-    .btn { width: 100%; border: 0; border-radius: 14px; padding: 14px 16px; font-size: 1rem; font-weight: 800; margin-top: 10px; }
+    .value { font-size: 1rem; min-height: 1.25em; }
+    .btn { width: 100%; border: 0; border-radius: 14px; padding: 14px 16px; font-size: 1rem; font-weight: 800; margin-top: 10px; cursor: pointer; }
     .primary { background: #0f766e; color: #fff; }
     .secondary { background: #eef2f7; color: #1f2937; }
+    .small { font-size: .85rem; color: #6b7280; margin-top: 10px; }
+    .err { background: #fef2f2; color: #b91c1c; }
+    .debug { display: none; white-space: pre-wrap; background: #111827; color: #fff; padding: 12px; border-radius: 12px; margin-top: 12px; overflow: auto; }
   </style>
 </head>
 <body>
@@ -35,8 +38,10 @@
       <button class="btn primary" id="refreshBtn">Rafraîchir l’affichage</button>
       <button class="btn secondary" id="copyBtn">Copier les infos</button>
       <div class="small" id="sourceLine">Source : API SNCF</div>
+      <div class="debug" id="debugBox"></div>
     </div>
   </div>
+
   <script>
     const apiUrl = 'sncf_api_response.json';
     let current = null;
@@ -76,6 +81,7 @@
         current = o;
         stationName.textContent = o.stationName;
         serviceStatus.textContent = o.serviceStatus;
+        serviceStatus.className = 'status';
         messageText.textContent = o.messageText;
         trainValue.textContent = o.trainValue;
         originValue.textContent = o.originValue;
@@ -85,20 +91,22 @@
         trackValue.textContent = o.trackValue;
         updateValue.textContent = o.updateValue;
         sourceLine.textContent = 'Source : ' + apiUrl;
+        debugBox.style.display = 'none';
       } catch (e) {
         stationName.textContent = 'API non chargée';
         serviceStatus.textContent = 'Flux indisponible';
+        serviceStatus.className = 'status err';
         messageText.textContent = 'Le fichier sncf_api_response.json est absent ou invalide.';
+        debugBox.style.display = 'block';
+        debugBox.textContent = String(e && e.message ? e.message : e);
       }
     }
 
     refreshBtn.onclick = tryLoad;
     copyBtn.onclick = async () => {
       if (!current) return;
-      await navigator.clipboard.writeText(
-        Object.entries(current).map(([k, v]) => `${k}: ${v}`).join('
-')
-      );
+      await navigator.clipboard.writeText(Object.entries(current).map(([k, v]) => `${k}: ${v}`).join('
+'));
     };
 
     tryLoad();
