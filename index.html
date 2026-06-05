@@ -25,39 +25,73 @@ body{font-family:system-ui;margin:0;padding:18px;background:#f5f1eb;color:#1f293
     <div class="row"><div class="label">Mise à jour</div><div class="value" id="updateValue">—</div></div>
     <button class="btn primary" id="refreshBtn">Rafraîchir l’affichage</button>
     <button class="btn secondary" id="copyBtn">Copier les infos</button>
-    <div class="small" id="sourceLine">Source : ./data.json</div>
+    <div class="small" id="sourceLine">Source : cascade</div>
     <div class="debug" id="debugBox"></div>
   </div>
 </div>
 <script>
+const sources = [
+  './data.json',
+  './data2.json',
+  './data3.json'
+];
 const el=id=>document.getElementById(id);
-const DATA_URL='./data.json';
 let current=null;
-function pick(o, keys, fb='—'){for(const k of keys){const v=o&&o[k];if(v!==undefined&&v!==null&&String(v).trim()!=='')return String(v)}return fb}
-async function loadData(){
-  try{
-    const r=await fetch(DATA_URL+'?t='+Date.now(),{cache:'no-store'});
-    const txt=await r.text();
-    const o=JSON.parse(txt);
-    current={
-      stationName:pick(o,['stationName','gare','station']),
-      serviceStatus:pick(o,['serviceStatus','statut','status']),
-      messageText:pick(o,['messageText','message','details']),
-      trainValue:pick(o,['trainValue','train','numTrain','trainNumber']),
-      originValue:pick(o,['originValue','origin','origine']),
-      destinationValue:pick(o,['destinationValue','destination','dest']),
-      plannedValue:pick(o,['plannedValue','prevu','planned']),
-      estimatedValue:pick(o,['estimatedValue','estime','estimated']),
-      trackValue:pick(o,['trackValue','voie','platform']),
-      updateValue:pick(o,['updateValue','miseAJour','updatedAt','lastUpdate'],new Date().toLocaleString('fr-FR'))
-    };
-    stationName.textContent=current.stationName;messageText.textContent=current.messageText;trainValue.textContent=current.trainValue;originValue.textContent=current.originValue;destinationValue.textContent=current.destinationValue;plannedValue.textContent=current.plannedValue;estimatedValue.textContent=current.estimatedValue;trackValue.textContent=current.trackValue;updateValue.textContent=current.updateValue;sourceLine.textContent='Source : '+DATA_URL;serviceStatus.textContent=current.serviceStatus;serviceStatus.className='status';debugBox.style.display='none';
-  }catch(e){
-    stationName.textContent='Impossible de charger';messageText.textContent='Vérifie que data.json existe à la racine et contient du JSON valide.';['trainValue','originValue','destinationValue','plannedValue','estimatedValue','trackValue'].forEach(id=>el(id).textContent='—');updateValue.textContent=new Date().toLocaleString('fr-FR');serviceStatus.textContent='Flux indisponible';serviceStatus.className='status err';debugBox.style.display='block';debugBox.textContent=String(e&&e.message?e.message:e);
-  }
+function normalize(o){
+  return {
+    stationName: o.stationName ?? o.gare ?? o.station ?? 'Chargement…',
+    serviceStatus: o.serviceStatus ?? o.statut ?? o.status ?? 'Lecture des données',
+    messageText: o.messageText ?? o.message ?? o.details ?? 'Récupération du flux en cours.',
+    trainValue: o.trainValue ?? o.train ?? o.numTrain ?? o.trainNumber ?? '—',
+    originValue: o.originValue ?? o.origin ?? o.origine ?? '—',
+    destinationValue: o.destinationValue ?? o.destination ?? o.dest ?? '—',
+    plannedValue: o.plannedValue ?? o.prevu ?? o.planned ?? '—',
+    estimatedValue: o.estimatedValue ?? o.estime ?? o.estimated ?? '—',
+    trackValue: o.trackValue ?? o.voie ?? o.platform ?? '—',
+    updateValue: o.updateValue ?? o.miseAJour ?? o.updatedAt ?? o.lastUpdate ?? new Date().toLocaleString('fr-FR')
+  };
 }
-refreshBtn.onclick=loadData;copyBtn.onclick=async()=>{if(!current)return;await navigator.clipboard.writeText(Object.entries(current).map(([k,v])=>`${k}: ${v}`).join('
-'))};loadData();setInterval(loadData,15000);
+async function fetchJson(url){
+  const r = await fetch(url + '?t=' + Date.now(), {cache:'no-store'});
+  if(!r.ok) throw new Error('HTTP ' + r.status);
+  return JSON.parse(await r.text());
+}
+async function tryLoad(){
+  let errs=[];
+  for (const url of sources){
+    try{
+      const data = await fetchJson(url);
+      const o = normalize(data);
+      current=o;
+      stationName.textContent=o.stationName;
+      serviceStatus.textContent=o.serviceStatus;
+      serviceStatus.className='status';
+      messageText.textContent=o.messageText;
+      trainValue.textContent=o.trainValue;
+      originValue.textContent=o.originValue;
+      destinationValue.textContent=o.destinationValue;
+      plannedValue.textContent=o.plannedValue;
+      estimatedValue.textContent=o.estimatedValue;
+      trackValue.textContent=o.trackValue;
+      updateValue.textContent=o.updateValue;
+      sourceLine.textContent='Source : ' + url;
+      debugBox.style.display='none';
+      return;
+    }catch(e){ errs.push(url + ': ' + (e && e.message ? e.message : String(e))); }
+  }
+  stationName.textContent='Impossible de charger';
+  serviceStatus.textContent='Flux indisponible';
+  serviceStatus.className='status err';
+  messageText.textContent='Aucune source n’a répondu.';
+  debugBox.style.display='block';
+  debugBox.textContent=errs.join('
+');
+}
+refreshBtn.onclick=tryLoad;
+copyBtn.onclick=async()=>{if(!current)return;await navigator.clipboard.writeText(Object.entries(current).map(([k,v])=>`${k}: ${v}`).join('
+'))};
+tryLoad();
+setInterval(tryLoad,15000);
 </script>
 </body>
 </html>
