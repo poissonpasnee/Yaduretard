@@ -1,7 +1,7 @@
 # Yaduretard
 
-Fichiers finaux :
-- index.html
-- data.json
+Mets ces 2 fichiers dans ton dépôt :
+- `index.html`
+- `sncf_api_response.json`
 
-GitHub Pages doit pointer vers la racine du repo ou du dossier publié.
+Ouvre ensuite `index.html` avec GitHub Pages.
